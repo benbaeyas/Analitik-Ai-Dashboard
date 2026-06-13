@@ -1,0 +1,10 @@
+[build]
+  # Root folder berisi index.html langsung (tidak ada build step)
+  publish = "."
+  functions = "netlify/functions"
+
+# Redirect /api/ai ke Netlify Function
+[[redirects]]
+  from = "/api/ai"
+  to   = "/.netlify/functions/ai"
+  status = 200
