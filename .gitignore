@@ -1,0 +1,20 @@
+# ── Credentials & Secrets ─────────────────────────────────────
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+
+# ── Dependencies ───────────────────────────────────────────────
+node_modules/
+package-lock.json
+
+# ── OS & Editor Junk ───────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/settings.json
+
+# ── Logs ───────────────────────────────────────────────────────
+*.log
+npm-debug.log*

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Augmented Dashboard</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&family=Geist:wght@400&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <!-- D3.js v7 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+  <nav>
+    <div class="nav-left">
+      <button class="nav-filter-btn" id="btn-filter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="7" y1="12" x2="17" y2="12"></line>
+          <line x1="10" y1="18" x2="14" y2="18"></line>
+        </svg>
+        Filter
+      </button>
+    </div>
+    <div class="nav-brand mono-text">NARATIF.AI // DASHBOARD SALES V1.0</div>
+    <div class="nav-right">
+      <a href="#" class="nav-tab active" id="nav-dashboard">Dashboard</a>
+      <a href="#" class="nav-tab" id="nav-tableau">Tableau</a>
+    </div>
+  </nav>
+
+  <!-- Filter Panel -->
+  <div class="filter-panel" id="filter-panel">
+    <div class="filter-panel-header">
+      <span class="mono-text">FILTERS</span>
+      <button class="filter-close-btn" id="btn-filter-close">&times;</button>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label mono-text">Category</label>
+      <div class="filter-options" id="filter-category"></div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label mono-text">Sub-Category</label>
+      <div class="filter-options scrollable" id="filter-subcategory"></div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label mono-text">Segment</label>
+      <div class="filter-options" id="filter-segment"></div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label mono-text">Territory</label>
+      <div class="filter-options scrollable" id="filter-territory"></div>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label mono-text">Date Range</label>
+      <div class="filter-date-range">
+        <input type="month" id="filter-date-start" class="filter-date-input">
+        <span class="mono-text">to</span>
+        <input type="month" id="filter-date-end" class="filter-date-input">
+      </div>
+    </div>
+    <div class="filter-actions">
+      <button class="filter-apply-btn primary" id="btn-filter-apply">Apply</button>
+      <button class="filter-reset-btn" id="btn-filter-reset">Reset</button>
+    </div>
+  </div>
+  <div class="filter-overlay" id="filter-overlay"></div>
+
+  <div class="container">
+    <!-- Zone 1: Setup -->
+    <section id="zone-setup" class="zone">
+      <div class="setup-hero">
+        <div class="setup-header">
+          <span class="signal-dot"></span>
+          <span class="mono-text">ANDREAS BENAYA/23082010025</span>
+        </div>
+        <h1 id="narrative-title">Analyzing Data...</h1>
+        <p id="setup-text" style="max-width: 800px; margin-bottom: 1.5rem;">Loading initial context...</p>
+      </div>
+      <div class="setup-metrics">
+        <div id="summary-cards">
+          <!-- KPI Cards rendered dynamically here -->
+        </div>
+      </div>
+      <div class="chart-container wide-chart" id="chart-setup-trend">
+        <h3 class="mono-text" id="trend-title">Sales vs Profit Trend</h3>
+        <p id="trend-insight" class="chart-insight-text"></p>
+      </div>
+    </section>
+
+    <!-- Zone 2: Conflict -->
+    <section id="zone-conflict" class="zone">
+      <div class="terminal-panel alert-panel">
+        <div class="alert-header">
+          <div class="alert-header-left">
+            <span class="alert-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-graphite-body);">
+                <!-- Hand-drawn/pencil sketch triangle -->
+                <path d="M11.5 3.5 L22 20.5 M21.5 20 L2.5 20 M2 20.5 L12.5 3 M12 3 L11.5 3.5"/>
+                <!-- Exclamation mark scribble -->
+                <path d="M11.8 9 Q11 12 12.2 14.5"/>
+                <!-- Exclamation dot scribble -->
+                <path d="M11.5 17.5 A.5 .5 0 1 1 12.5 17.5 A.5 .5 0 1 1 11.5 17.5"/>
+              </svg>
+            </span>
+            <h2 class="alert-title">Anomali Terdeteksi</h2>
+            <div id="badge-severe" class="category-badge severity-badge">0 Kritis</div>
+            <div id="badge-warning" class="category-badge severity-badge">0 Peringatan</div>
+          </div>
+          <button class="primary btn-narasi" id="btn-narasi-ai">Narasi AI</button>
+        </div>
+
+        <div class="alert-tabs">
+          <div id="tab-data" class="tab-item active">Data Anomali</div>
+          <div id="tab-narasi" class="tab-item">Narasi AI</div>
+        </div>
+
+        <div id="content-data">
+          <ul id="alert-list" class="alert-list">
+            <!-- Custom formatted alerts here -->
+          </ul>
+        </div>
+        <div id="content-narasi" style="display: none;">
+          <div id="anomalies-narrative" class="mono-text" style="color: var(--color-ink); line-height: 1.6;">Memproses
+            narasi AI...</div>
+          <div id="conflict-text" style="display: none;"></div>
+        </div>
+      </div>
+
+      <div class="conflict-nav-group">
+        <div class="toggle-switch">
+          <button id="btn-toggle-sales" class="toggle-btn active">Sales</button>
+          <button id="btn-toggle-profit" class="toggle-btn">Profit</button>
+        </div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-container" id="chart-comp-category">
+          <h3 class="mono-text" id="title-comp-category">By Product</h3>
+          <p id="insight-comp-category" class="chart-insight-text"></p>
+        </div>
+        <div class="chart-container" id="chart-comp-segment">
+          <h3 class="mono-text" id="title-comp-segment">By Segment</h3>
+          <p id="insight-comp-segment" class="chart-insight-text"></p>
+        </div>
+        <div class="chart-container" id="chart-comp-subcat">
+          <h3 class="mono-text" id="title-comp-subcat">By Sub-Category</h3>
+          <p id="insight-comp-subcat" class="chart-insight-text"></p>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-container wide-chart" id="chart-subcat-zscore">
+          <h3 class="mono-text">Paradoks Portofolio: "Tires" Memimpin Profitabilitas di Saat "Caps" Mengalai Defisit Margin
+          </h3>
+          <p id="zscore-insight" class="chart-insight-text"></p>
+        </div>
+        <div class="chart-container wide-chart" id="chart-product-scatter">
+          <h3 class="mono-text">Inversi Struktur: Beban Biaya "AWC Logo Cap" Menerobos dan Menganulir harga Jualnya</h3>
+          <p id="scatter-insight" class="chart-insight-text"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone 3: Resolution -->
+    <section id="zone-resolution" class="zone">
+      <div class="chart-grid">
+        <div class="chart-container wide-chart" id="chart-region-cost">
+          <h3 class="mono-text">Restrukturisasi Regional: Replikasi Model Efisiensi Australia Guna Memulihkan Margin Domestik</h3>
+          <p id="region-insight" class="chart-insight-text"></p>
+        </div>
+      </div>
+      <div class="factory-card">
+        <div class="category-badge">AI Insight</div>
+        <p id="resolution-text">Waiting for AI synthesis...</p>
+
+        <div class="terminal-panel" style="margin-top: 1rem;">
+          <div id="insight-output">No insights yet. Ask a question below.</div>
+        </div>
+
+        <div class="insight-input-group">
+          <input type="text" id="custom-question" placeholder="Ask the AI a specific question...">
+          <button class="primary" id="btn-submit-question">Submit</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Global Tooltip -->
+  <div id="d3-tooltip" class="d3-tooltip"></div>
+
+  <!-- Scripts -->
+  <script src="config.js"></script>
+  <script src="aiInsight.js"></script>
+  <script src="anomalyDetector.js"></script>
+  <script src="storyEngine.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
