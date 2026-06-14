@@ -28,7 +28,7 @@ function computeSummary(data) {
 }
 
 function formatCurrency(val) {
-  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 }
 
 function renderKPIs(summary) {
@@ -220,7 +220,7 @@ function drawChart(containerId, data, xAccessor, yAccessor, xLabel, isHorizontal
         const isAnomaly = yAccessor(d) < 0 || d.anomalous;
         d3.select(this).attr('fill', isAnomaly ? 'var(--color-chart-red)' : 'var(--color-chart-blue)');
         tooltip.transition().duration(150).style('opacity', 1);
-        tooltip.html(`<strong>${xAccessor(d)}</strong><br/>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(yAccessor(d))}`)
+        tooltip.html(`<strong>${xAccessor(d)}</strong><br/>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(yAccessor(d))}`)
                .style('left', (event.pageX + 10) + 'px')
                .style('top', (event.pageY - 28) + 'px');
       })
@@ -313,7 +313,7 @@ function drawScatterPlot(containerId, data) {
       const isAnomaly = d.anomalous || (d.Sales > medianSales && d.Profit < 0);
       d3.select(this).attr('fill', isAnomaly ? 'var(--color-chart-red)' : 'var(--color-chart-blue)');
       tooltip.transition().duration(150).style('opacity', 1);
-      const format = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
+      const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
       const marginPct = d.Sales > 0 ? ((d.Profit / d.Sales) * 100).toFixed(1) : 0;
       tooltip.html(`<strong>${d.key}</strong><br/>Sales: ${format.format(d.Sales)}<br/>Profit: ${format.format(d.Profit)} (${marginPct}%)`)
              .style('left', (event.pageX + 10) + 'px')
@@ -449,7 +449,7 @@ function drawDualAreaChart(containerId, data) {
 
   // Layer 5: Interaction overlay
   const tooltip = d3.select('#d3-tooltip');
-  const formatCur = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v);
+  const formatCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
   svg.selectAll('.dot-interact').data(data).enter().append('circle')
     .attr('cx', d => x(parseTime(d.month))).attr('cy', d => yLeft(d.Sales))
@@ -671,7 +671,7 @@ function drawProductScatterPlot(containerId, data) {
     .attr('stroke-dasharray', '4 4');
 
   const tooltip = d3.select('#d3-tooltip');
-  const format = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
+  const format = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
   // Layer 3 & 4: Dots
   svg.selectAll('.dot').data(data).enter().append('circle')
@@ -747,7 +747,7 @@ function drawGroupedBarChart(containerId, data) {
   const color = d3.scaleOrdinal().domain(subgroups).range(['var(--color-chart-blue)', 'var(--color-chart-green)']);
   const colorLight = d3.scaleOrdinal().domain(subgroups).range(['var(--color-chart-blue-light)', 'var(--color-chart-green-light)']);
   const tooltip = d3.select('#d3-tooltip');
-  const formatCur = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v);
+  const formatCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
   svg.append("g").selectAll("g").data(data).enter().append("g")
     .attr("transform", d => `translate(${x(d.Territory)},0)`)
@@ -868,7 +868,7 @@ function drawDonutChart(containerId, data) {
   const arcHover = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 1.05);
 
   const tooltip = d3.select('#d3-tooltip');
-  const formatCur = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v);
+  const formatCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
   svg.selectAll('path').data(data_ready).enter().append('path')
     .attr('d', arc)
@@ -963,7 +963,7 @@ function drawVerticalBarChart(containerId, data) {
 
   // Layer 3 & 4: Bars
   const tooltip = d3.select('#d3-tooltip');
-  const formatCur = (v) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v);
+  const formatCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
   const bars = svg.selectAll("rect").data(plotData).enter().append("rect");
   bars.attr("x", d => x(d.key))
@@ -1018,9 +1018,7 @@ function generateRegionInsight(territoryData) {
   const el = document.getElementById('region-insight');
   if (!el || !territoryData || territoryData.length === 0) return;
 
-  const fmtCur = (v) => new Intl.NumberFormat('id-ID', {
-    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-  }).format(v);
+  const fmtCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
   const fmtPct = (n) => n.toFixed(1) + '%';
 
   // Compute margin gap = (UnitPrice - ProductCost) / UnitPrice * 100
@@ -1083,9 +1081,7 @@ function generateScatterInsight(productData) {
 
   const totalProducts = productData.length;
   const fmt = (n) => (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
-  const fmtCur = (v) => new Intl.NumberFormat('id-ID', {
-    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-  }).format(v);
+  const fmtCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
 
   let insight = '';
 
@@ -1124,9 +1120,7 @@ function generateCompInsight(elId, aggData, isSales, type) {
   const el = document.getElementById(elId);
   if (!el || !aggData || aggData.length === 0) return;
 
-  const fmtCur = (v) => new Intl.NumberFormat('id-ID', {
-    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-  }).format(v);
+  const fmtCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
   const fmtPct = (n) => n.toFixed(1) + '%';
 
   const sorted     = [...aggData].sort((a, b) => b.value - a.value);
@@ -1202,9 +1196,7 @@ function generateTrendInsight(trendData) {
     const names = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
     return `${names[parseInt(mon, 10) - 1]} ${year}`;
   };
-  const fmtCur = (v) => new Intl.NumberFormat('id-ID', {
-    style: 'currency', currency: 'IDR', maximumFractionDigits: 0
-  }).format(v);
+  const fmtCur = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(v);
   const fmtPct = (n) => (n >= 0 ? '+' : '') + n.toFixed(1) + '%';
 
   // Key data points
@@ -1514,6 +1506,42 @@ function initFilterPanel() {
   populateFilterOptions();
 }
 
+// ── Rich Context Builder ──────────────────────────────────────
+// Aggregates globalRawData into breakdown tables so AI can answer
+// questions like "profit Australia" or "segment mana paling rugi"
+function buildRichContext(data) {
+  const agg = (groupKey, valueKeys) => {
+    const map = d3.rollup(data,
+      v => {
+        const sales  = d3.sum(v, d => d.Sales);
+        const profit = d3.sum(v, d => d.Profit);
+        const qty    = d3.sum(v, d => d.Qty);
+        return {
+          sales,
+          profit,
+          margin_pct: sales > 0 ? +((profit / sales) * 100).toFixed(2) : 0,
+          qty
+        };
+      },
+      d => d[groupKey]
+    );
+    return Array.from(map, ([key, val]) => ({ [groupKey]: key, ...val }))
+      .sort((a, b) => b.sales - a.sales);
+  };
+
+  // Top 15 products by sales to keep token count manageable
+  const byProduct = agg('ProductName').slice(0, 15);
+
+  return {
+    summary: computeSummary(data),
+    by_territory: agg('Territory'),
+    by_segment:   agg('Segment'),
+    by_subcat:    agg('SubCategory'),
+    by_category:  agg('Category'),
+    by_product_top15: byProduct,
+  };
+}
+
 async function init() {
   try {
     let rawData = [];
@@ -1593,7 +1621,9 @@ async function init() {
       if (!q) return;
       insightOutput.innerHTML = "Memproses...";
       try {
-        const answer = await getInsight(summary, q);
+        // Pass rich context — breakdown per territory, segment, subcat, product
+        const richContext = buildRichContext(globalRawData);
+        const answer = await getInsight(richContext, q);
         insightOutput.innerHTML = answer.replace(/\n/g, '<br>');
         inputQuestion.value = '';
       } catch (e) {

@@ -196,12 +196,101 @@
   <!-- Global Tooltip -->
   <div id="d3-tooltip" class="d3-tooltip"></div>
 
+  <!-- Tableau Page -->
+  <div id="page-tableau" style="display:none;">
+    <div class="tableau-wrapper">
+      <div class="tableau-header">
+        <span class="mono-text" style="font-size:0.8rem; color: var(--color-iron-caption);">TABLEAU PUBLIC // EMBEDDED VIEW</span>
+        <h2 style="margin-top: 0.5rem; letter-spacing: -0.048em;">Erosi Margin pada Penjualan</h2>
+        <p style="color: var(--color-iron-caption); font-size: 0.875rem; margin-top: 0.25rem;">Visualisasi interaktif dari Tableau Public — by Andreas Benaya</p>
+      </div>
+      <div class="tableau-embed-container">
+        <div class='tableauPlaceholder' id='viz1781407726232' style='position: relative; width: 100%;'>
+          <noscript>
+            <a href='#'>
+              <img alt='Dashboard 1' src='https://public.tableau.com/static/images/Er/ErosiMarginPadaPenjualanDashboard-ByAndreasBenaya/Dashboard1/1_rss.png' style='border: none' />
+            </a>
+          </noscript>
+          <object class='tableauViz' style='display:none;'>
+            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+            <param name='embed_code_version' value='3' />
+            <param name='site_root' value='' />
+            <param name='name' value='ErosiMarginPadaPenjualanDashboard-ByAndreasBenaya/Dashboard1' />
+            <param name='tabs' value='no' />
+            <param name='toolbar' value='yes' />
+            <param name='static_image' value='https://public.tableau.com/static/images/Er/ErosiMarginPadaPenjualanDashboard-ByAndreasBenaya/Dashboard1/1.png' />
+            <param name='animate_transition' value='yes' />
+            <param name='display_static_image' value='yes' />
+            <param name='display_spinner' value='yes' />
+            <param name='display_overlay' value='yes' />
+            <param name='display_count' value='yes' />
+            <param name='language' value='en-US' />
+          </object>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Tooltip -->
+  <div id="d3-tooltip" class="d3-tooltip"></div>
+
   <!-- Scripts -->
   <script src="config.js"></script>
   <script src="aiInsight.js"></script>
   <script src="anomalyDetector.js"></script>
   <script src="storyEngine.js"></script>
   <script src="app.js"></script>
+
+  <!-- Tableau embed script — loaded on demand when Tableau tab is activated -->
+  <script>
+    (function() {
+      var tabBtn = document.getElementById('nav-tableau');
+      var dashBtn = document.getElementById('nav-dashboard');
+      var dashPage = document.querySelector('.container');
+      var tableauPage = document.getElementById('page-tableau');
+      var filterBtn = document.getElementById('btn-filter');
+      var tableauScriptLoaded = false;
+
+      function loadTableauScript() {
+        if (tableauScriptLoaded) return;
+        tableauScriptLoaded = true;
+        var divElement = document.getElementById('viz1781407726232');
+        var vizElement = divElement.getElementsByTagName('object')[0];
+        if (divElement.offsetWidth > 800) {
+          vizElement.style.width = '1200px';
+          vizElement.style.height = '827px';
+        } else if (divElement.offsetWidth > 500) {
+          vizElement.style.width = '1200px';
+          vizElement.style.height = '827px';
+        } else {
+          vizElement.style.width = '100%';
+          vizElement.style.height = '1677px';
+        }
+        var scriptElement = document.createElement('script');
+        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+        vizElement.parentNode.insertBefore(scriptElement, vizElement);
+      }
+
+      tabBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        tabBtn.classList.add('active');
+        dashBtn.classList.remove('active');
+        dashPage.style.display = 'none';
+        tableauPage.style.display = 'block';
+        filterBtn.style.display = 'none';
+        loadTableauScript();
+      });
+
+      dashBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        dashBtn.classList.add('active');
+        tabBtn.classList.remove('active');
+        tableauPage.style.display = 'none';
+        dashPage.style.display = 'flex';
+        filterBtn.style.display = '';
+      });
+    })();
+  </script>
 </body>
 
 </html>

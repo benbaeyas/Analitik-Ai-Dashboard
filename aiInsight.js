@@ -31,6 +31,9 @@ async function getUnifiedAIResponse(summary, anomalies) {
 Kamu adalah data analyst dan storyteller ahli.
 Berdasarkan data ringkasan dan anomali penjualan berikut:
 
+PENTING: Semua nilai Sales, Profit, dan biaya dalam data ini adalah dalam mata uang USD (Dolar Amerika). 
+Gunakan format "$1,234" atau "USD 1,234" saat menyebutkan angka dalam narasi. JANGAN gunakan Rupiah atau IDR.
+
 DATA RINGKASAN:
 ${JSON.stringify(summary, null, 2)}
 
@@ -114,29 +117,34 @@ function parseUnifiedResponse(text) {
 }
 
 // ── Standalone insight for custom questions ────────────────────
-async function getInsight(summaryStats, customQuestion) {
+async function getInsight(richContext, customQuestion) {
   const prompt = `
 Kamu adalah asisten analisis data khusus untuk dashboard penjualan ini.
-Berikut adalah data ringkasan dashboard yang sedang ditampilkan:
+Berikut adalah data lengkap dashboard yang sedang ditampilkan, termasuk breakdown per wilayah, segmen, sub-kategori, kategori, dan produk:
 
-DATA DASHBOARD:
-${JSON.stringify(summaryStats, null, 2)}
+PENTING: Semua nilai Sales, Profit, dan biaya dalam data ini adalah dalam mata uang USD (Dolar Amerika).
+Gunakan format "$1,234" atau "USD 1,234" saat menyebutkan angka. JANGAN gunakan Rupiah atau IDR.
+
+DATA LENGKAP DASHBOARD:
+${JSON.stringify(richContext, null, 2)}
 
 PERTANYAAN USER:
 "${customQuestion}"
 
 ATURAN KETAT YANG HARUS DIIKUTI:
-1. Kamu HANYA boleh menjawab pertanyaan yang berkaitan dengan data penjualan, grafik, metrik, tren, anomali, atau rekomendasi bisnis berdasarkan data di atas.
-2. Jika pertanyaan TIDAK berkaitan dengan data dashboard (contoh: matematika umum, pengetahuan umum, coding, cuaca, dll), TOLAK dengan sopan dan arahkan kembali ke konteks dashboard.
-3. Format penolakan jika di luar konteks: "Pertanyaan ini di luar konteks dashboard. Silakan tanyakan seputar data penjualan, grafik, atau metrik yang tersedia."
-4. Jawaban harus selalu mengacu pada angka/metrik spesifik dari data yang diberikan jika relevan.
-5. Jawab dalam Bahasa Indonesia.
+1. Gunakan data breakdown di atas untuk menjawab pertanyaan spesifik seperti "profit Australia", "segment mana paling rugi", "produk terbaik", dll. Data per wilayah ada di "by_territory", per segmen di "by_segment", per sub-kategori di "by_subcat", per produk di "by_product_top15".
+2. JIKA pengguna meminta rekomendasi, saran bisnis, insight strategi, atau menanyakan "Mengapa" dan "Bagaimana" terkait sales/profit/diskon, BERIKAN JAWABAN ANALITIS YANG MENDALAM berbasis data di atas.
+3. Pertanyaan singkat seperti "Masalah region?", "Rekomendasi?", atau "Prioritas profit?" ADALAH pertanyaan bisnis yang valid — WAJIB dijawab berdasarkan data.
+4. Jika pertanyaan BENAR-BENAR tidak berkaitan dengan data dashboard (matematika umum, pengetahuan umum, coding, cuaca, dll), tolak dengan sopan: "Maaf, kemampuan saya dibatasi khusus untuk menganalisis data penjualan dan memberikan rekomendasi bisnis pada dashboard ini saja."
+5. Jawaban harus selalu menyebut angka/metrik spesifik dari data yang diberikan.
+6. Jawab dalam Bahasa Indonesia.
   `.trim();
 
-  const systemInstruction = `Kamu adalah asisten AI yang HANYA bertugas menganalisis data dashboard penjualan. 
+  const systemInstruction = `Kamu adalah asisten AI yang HANYA bertugas menganalisis data dashboard penjualan.
+Data yang kamu terima mencakup breakdown per wilayah (Territory), segmen, sub-kategori, kategori, dan produk.
+Gunakan data breakdown tersebut untuk menjawab pertanyaan spesifik tentang wilayah, produk, atau segmen tertentu.
 Kamu TIDAK boleh menjawab pertanyaan di luar topik: data penjualan, profit, margin, tren, anomali, segmen, produk, wilayah, dan rekomendasi bisnis berbasis data.
-Jika user bertanya hal lain (matematika, pengetahuan umum, hiburan, dll), tolak dengan sopan dan minta user untuk bertanya seputar data dashboard.
-Selalu jawab dalam Bahasa Indonesia.`;
+Selalu jawab dalam Bahasa Indonesia dengan menyebut angka USD spesifik dari data.`;
 
   return await callGroq(prompt, systemInstruction);
 }

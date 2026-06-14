@@ -717,3 +717,35 @@ svg {
   color: var(--color-iron-caption);
   letter-spacing: -0.015em;
 }
+
+/* ── Tableau Page ────────────────────────────────────────────── */
+#page-tableau {
+  min-height: calc(100vh - 53px);
+  background-color: var(--color-paper-white);
+}
+
+.tableau-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.tableau-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-pewter-rule);
+}
+
+.tableau-embed-container {
+  border: 1px dotted var(--color-ash-hairline);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-frost-surface);
+  padding: 1rem;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.tableau-embed-container .tableauPlaceholder {
+  max-width: 100%;
+}
