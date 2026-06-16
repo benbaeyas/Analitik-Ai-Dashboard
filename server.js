@@ -31,14 +31,21 @@ async function handleAI(req, res) {
   req.on('data', chunk => { body += chunk; });
   req.on('end', async () => {
     try {
-      const { prompt, systemInstruction } = JSON.parse(body);
+      const parsed = JSON.parse(body);
+      let messages;
+
+      if (parsed.messages) {
+        messages = parsed.messages;
+      } else {
+        messages = [
+          { role: 'system', content: parsed.systemInstruction || 'Anda adalah asisten AI ahli dalam analisis data.' },
+          { role: 'user',   content: parsed.prompt }
+        ];
+      }
 
       const payload = JSON.stringify({
         model: MODEL,
-        messages: [
-          { role: 'system', content: systemInstruction || 'Anda adalah asisten AI ahli dalam analisis data.' },
-          { role: 'user',   content: prompt }
-        ]
+        messages
       });
 
       // Use native https module to call Groq

@@ -34,14 +34,21 @@ exports.handler = async function (event) {
     };
   }
 
-  const { prompt, systemInstruction } = parsed;
+  let messages;
+
+  if (parsed.messages) {
+    messages = parsed.messages;
+  } else {
+    const { prompt, systemInstruction } = parsed;
+    messages = [
+      { role: 'system', content: systemInstruction || 'Anda adalah asisten AI ahli dalam analisis data.' },
+      { role: 'user',   content: prompt }
+    ];
+  }
 
   const payload = JSON.stringify({
     model: MODEL,
-    messages: [
-      { role: 'system', content: systemInstruction || 'Anda adalah asisten AI ahli dalam analisis data.' },
-      { role: 'user',   content: prompt }
-    ]
+    messages
   });
 
   // Panggil Groq API menggunakan native https

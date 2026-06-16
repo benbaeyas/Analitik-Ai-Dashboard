@@ -1,12 +1,27 @@
 // aiInsight.js — All AI communication goes through the local proxy server
 // The API key is NEVER present in the browser.
 
-async function callGroq(prompt, systemInstruction = "Anda adalah asisten AI ahli dalam analisis data.") {
+// Session-level chat history (hilang saat tab di-refresh)
+const chatSessionHistory = [];
+
+async function callGroq(prompt, systemInstruction = "Anda adalah asisten AI ahli dalam analisis data.", { useHistory = false } = {}) {
   try {
+    let finalPrompt = prompt;
+
+    if (useHistory && chatSessionHistory.length > 0) {
+      const historyText = chatSessionHistory.map(msg => {
+        const label = msg.role === 'user' ? 'User' : 'Assistant';
+        return `${label}: ${msg.content}`;
+      }).join('\n');
+      finalPrompt = `RIWAYAT PERCAKAPAN SEBELUMNYA:\n${historyText}\n\nPERTANYAAN BARU:\n${prompt}`;
+    }
+
+    const body = JSON.stringify({ prompt: finalPrompt, systemInstruction });
+
     const response = await fetch(CONFIG.AI_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, systemInstruction })
+      body
     });
 
     if (!response.ok) {
@@ -16,7 +31,17 @@ async function callGroq(prompt, systemInstruction = "Anda adalah asisten AI ahli
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    const reply = data.choices?.[0]?.message?.content || '';
+
+    if (useHistory && reply) {
+      chatSessionHistory.push({ role: 'user', content: prompt });
+      chatSessionHistory.push({ role: 'assistant', content: reply });
+      while (chatSessionHistory.length > 20) {
+        chatSessionHistory.shift();
+      }
+    }
+
+    return reply;
   } catch (error) {
     console.error("Fetch error:", error);
     return "Gagal terhubung ke server AI.";
@@ -116,7 +141,7 @@ function parseUnifiedResponse(text) {
   }
 }
 
-// ── Standalone insight for custom questions ────────────────────
+// ── Standalone insight for custom questions (with session history) ──
 async function getInsight(richContext, customQuestion) {
   const prompt = `
 Kamu adalah asisten analisis data khusus untuk dashboard penjualan ini.
@@ -138,13 +163,15 @@ ATURAN KETAT YANG HARUS DIIKUTI:
 4. Jika pertanyaan BENAR-BENAR tidak berkaitan dengan data dashboard (matematika umum, pengetahuan umum, coding, cuaca, dll), tolak dengan sopan: "Maaf, kemampuan saya dibatasi khusus untuk menganalisis data penjualan dan memberikan rekomendasi bisnis pada dashboard ini saja."
 5. Jawaban harus selalu menyebut angka/metrik spesifik dari data yang diberikan.
 6. Jawab dalam Bahasa Indonesia.
+7. Jika ada konteks percakapan sebelumnya, gunakan itu untuk memberikan jawaban yang lebih relevan dan koheren.
   `.trim();
 
   const systemInstruction = `Kamu adalah asisten AI yang HANYA bertugas menganalisis data dashboard penjualan.
 Data yang kamu terima mencakup breakdown per wilayah (Territory), segmen, sub-kategori, kategori, dan produk.
 Gunakan data breakdown tersebut untuk menjawab pertanyaan spesifik tentang wilayah, produk, atau segmen tertentu.
 Kamu TIDAK boleh menjawab pertanyaan di luar topik: data penjualan, profit, margin, tren, anomali, segmen, produk, wilayah, dan rekomendasi bisnis berbasis data.
-Selalu jawab dalam Bahasa Indonesia dengan menyebut angka USD spesifik dari data.`;
+Selalu jawab dalam Bahasa Indonesia dengan menyebut angka USD spesifik dari data.
+Kamu memiliki akses ke riwayat percakapan sebelumnya dalam sesi ini. Gunakan konteks tersebut untuk menjawab pertanyaan lanjutan.`;
 
-  return await callGroq(prompt, systemInstruction);
+  return await callGroq(prompt, systemInstruction, { useHistory: true });
 }

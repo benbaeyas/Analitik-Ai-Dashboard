@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="favicon.svg">
   <title>AI-Augmented Dashboard</title>
 
   <!-- Fonts -->
@@ -181,6 +182,14 @@
         <div class="category-badge">AI Insight</div>
         <p id="resolution-text">Waiting for AI synthesis...</p>
 
+        <div class="suggested-prompts" id="suggested-prompts">
+          <button class="prompt-chip" data-prompt="Apa anomali utama yang terdeteksi?">Anomali utama?</button>
+          <button class="prompt-chip" data-prompt="Region mana yang paling bermasalah dan mengapa?">Region bermasalah?</button>
+          <button class="prompt-chip" data-prompt="Berikan rekomendasi strategi untuk meningkatkan profit">Rekomendasi profit</button>
+          <button class="prompt-chip" data-prompt="Produk mana yang paling merugikan?">Produk paling rugi?</button>
+          <button class="prompt-chip" data-prompt="Bagaimana performa tiap segment pelanggan?">Performa segment?</button>
+        </div>
+
         <div class="terminal-panel" style="margin-top: 1rem;">
           <div id="insight-output">No insights yet. Ask a question below.</div>
         </div>
@@ -291,6 +300,7 @@
       });
     })();
   </script>
+  <script src="favicon-animated.js"></script>
 </body>
 
 </html>

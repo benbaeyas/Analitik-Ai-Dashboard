@@ -1631,6 +1631,22 @@ async function init() {
       }
     });
 
+    // Suggested Prompts Click Handler
+    document.querySelectorAll('.prompt-chip').forEach(chip => {
+      chip.addEventListener('click', async () => {
+        const q = chip.getAttribute('data-prompt');
+        if (!q) return;
+        insightOutput.innerHTML = "Memproses...";
+        try {
+          const richContext = buildRichContext(globalRawData);
+          const answer = await getInsight(richContext, q);
+          insightOutput.innerHTML = answer.replace(/\n/g, '<br>');
+        } catch (e) {
+          insightOutput.innerHTML = "Gagal memuat jawaban AI.";
+        }
+      });
+    });
+
     // Tab Switching Logic
     const tabData = document.getElementById('tab-data');
     const tabNarasi = document.getElementById('tab-narasi');
